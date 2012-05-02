@@ -1,14 +1,19 @@
+require './models'
 class WebApp
   def call(env)
-    lang = env['HTTP_ACCEPT_LANGUAGE'] || 'en'
-    path = env['PATH_INFO']
+    method = env["REQUEST_METHOD"]
+    status, body = case method
+      when "GET"
+        [200, Models::Quote.all.map(&:as_text).join("\n")]
+      else
+        [405, ""]
+      end
 
-    body = if lang == 'en'
-             "you just asked for #{path}, \n with the env #{env.to_s}"
-           else
-             "acabas de pedir #{path}, \n con el entorno #{env.to_s}"
-           end
-
-    [201, {'Content-Type' => "text/plain"}, [body]]
+    [
+     status,
+     #los valores de los headers *deben* ser String
+     {'Content-Type' => 'text/plain', 'Content-Length' => body.size.to_s},
+     [body]
+    ]
   end
 end

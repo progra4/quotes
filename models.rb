@@ -1,6 +1,9 @@
 require 'securerandom'
 module Models
   class Quote
+
+    @@instances = []
+
     attr_accessor :author, :content, :language
     attr_reader :id
 
@@ -9,6 +12,8 @@ module Models
       @author = author
       @content = content
       @language = language
+
+      @@instances << self
     end
 
     def as_text
@@ -27,28 +32,39 @@ module Models
         hash_or_array.map{|h|  Quote.create(h)  }
       end
     end
+
+    def self.all
+      @@instances
+    end
+
+    def self.find(id)
+      @@instances.find do |instance|
+        instance.id == id
+      end
+    end
   end
 
-  QUOTES = Quote.create([
-      {
-        author: "Ralph Waldo Emerson",
-        content: "Every sweet has its sour; every evil its good.",
-        language: "en"
-      },
-      {
-        author: "Winston Churchill",
-        content: "We make a living by what we get, we make a life by what we give",
-        language: "en"
-      },
-      {
-        author: "Siddhartha Gautama",
-        content: "El dolor es inevitable pero el sufrimiento es opcional.",
-        language: "es"
-      },
-      {
-        author: "Walt Whitman",
-        content: "Be curious, not judgmental",
-        language: "en"
-      }
-  ])
 end
+
+Models::Quote.create([
+    {
+      author: "Ralph Waldo Emerson",
+      content: "Every sweet has its sour; every evil its good.",
+      language: "en"
+    },
+    {
+      author: "Winston Churchill",
+      content: "We make a living by what we get, we make a life by what we give",
+      language: "en"
+    },
+    {
+      author: "Siddhartha Gautama",
+      content: "El dolor es inevitable pero el sufrimiento es opcional.",
+      language: "es"
+    },
+    {
+      author: "Walt Whitman",
+      content: "Be curious, not judgmental",
+      language: "en"
+    }
+])

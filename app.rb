@@ -8,9 +8,9 @@ class WebApp
   def call(env)
 
     request = Rack::Request.new(env)
-    controller = QuotesController.new
+    controller = QuotesController.new(request)
     
-    status, body = controller.dispatch(request)
+    status, body = controller.dispatch
 
     [
      status,

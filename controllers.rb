@@ -3,19 +3,24 @@ module Controllers
   class NotFoundException < Exception; end
 
   class Controller
-    def route(request)
+    
+    attr_accessor :request
+
+    def initialize(request)
+      @request = request
+    end
+
+    def route
       collection_pattern = /\/#{resource_name}$/
       member_pattern     = /\/#{resource_name}\/([a-z0-9\-]+)/
 
 
-      puts request.path
-      puts collection_pattern, member_pattern
       #collection actions
       if request.path =~ collection_pattern
         if request.get?
-          return index(request)
+          return index
         elsif request.post?
-          return create(request)
+          return create
         else
           return [405, ""]
         end
@@ -26,11 +31,11 @@ module Controllers
         request.params["id"] = request.path.match(member_pattern)[1]
         if request.get?
           # show <=> read
-          return show(request)
+          return show
         elsif request.put?
-          return update(request)
+          return update
         elsif request.delete?
-          return destroy(request)
+          return destroy
         else
           return [405, ""]
         end
@@ -41,12 +46,12 @@ module Controllers
     end
 
 
-    def dispatch(request)
+    def dispatch
       begin
-        route request
+        route 
       rescue NotFoundException
         [404, ""]
-      rescue
+      rescue 
         [500, ""]
       end
     end
@@ -60,11 +65,11 @@ module Controllers
       "quotes"
     end
 
-    def index(request)
+    def index
       [200, Quote.all.map(&:as_text).join("\n")]
     end
 
-    def show(request)
+    def show
       quote = Quote.find(request.params["id"])
       if quote
         [200, quote.as_text]

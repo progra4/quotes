@@ -1,18 +1,19 @@
 require './models'
+require 'rack'
+
 class WebApp
   def call(env)
-    method = env["REQUEST_METHOD"]
-    path   = env["REQUEST_PATH"]
 
+    request = Rack::Request.new(env)
+    
     collection_pattern = /\/quotes$/
     member_pattern     = /\/quotes\/([a-z0-9\-]+)/
 
-    status, body = case method
-      when "GET"
-        if path =~ collection_pattern
+    status, body = if request.get?
+        if request.path =~ collection_pattern
           [200, Models::Quote.all.map(&:as_text).join("\n")]
-        elsif path =~ member_pattern
-          id = path.match(member_pattern)[1]
+        elsif request.path =~ member_pattern
+          id = request.path.match(member_pattern)[1]
           quote = Models::Quote.find(id)
           if quote
             [200, quote.as_text]

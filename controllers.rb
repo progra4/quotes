@@ -77,5 +77,14 @@ module Controllers
         raise NotFoundException
       end
     end
+
+    def create
+      quote = Quote.create(
+        content: request.params["content"],
+        author:  request.params["author"]
+      )
+
+      [201, quote.as_text]
+    end
   end
 end

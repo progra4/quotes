@@ -16,6 +16,10 @@ module Controllers
       collection_pattern = /\/#{resource_name}$/
       member_pattern     = /\/#{resource_name}\/([a-z0-9\-]+)/
 
+      #non-restful actions
+      if request.path == "/#{resource_name}/new"
+        return new
+      end
 
       #collection actions
       if request.path =~ collection_pattern
@@ -42,6 +46,7 @@ module Controllers
           return [405, ""]
         end
       end
+
 
       #a not implemented path was requested
       return [501, ""]
@@ -71,6 +76,10 @@ module Controllers
     def index
       quotes = Quote.all
       [200, INDEX.render(binding)]
+    end
+
+    def new
+      [200, NEW.render]
     end
 
     def show

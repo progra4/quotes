@@ -8,7 +8,7 @@ module Views
       @template = ERB.new(template)
     end
 
-    def render(with_binding)
+    def render(with_binding = nil)
       #this adds body to the top-level binding
       body = @template.result(with_binding)
       if @layout
@@ -54,6 +54,24 @@ module Views
           </li>
         <% end %>
       </ul>
+      <a href="/quotes/new">New Quote</a>
+    ERB
+  end
+
+  NEW = View.define(in: BASE) do
+    <<-ERB
+      <form action="/quotes" method = "post">
+        <p>
+         <label for="c">Content</label>
+         <textarea id="c" name="content"></textarea>
+        </p>
+        <p>
+         <label for="c">Author</label>
+         <input type="text" id="a" name="author"/>
+        </p>
+
+         <input type="submit" value="Create" />
+      </form>
     ERB
   end
 end

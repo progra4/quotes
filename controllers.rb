@@ -1,4 +1,6 @@
 require './models'
+require './views'
+
 module Controllers
   class NotFoundException < Exception; end
 
@@ -60,13 +62,15 @@ module Controllers
 
   class QuotesController < Controller
     include Models
+    include Views
 
     def resource_name
       "quotes"
     end
 
     def index
-      [200, Quote.all.map(&:as_text).join("\n")]
+      quotes = Quote.all
+      [200, INDEX.render(binding)]
     end
 
     def show

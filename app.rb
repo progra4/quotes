@@ -15,7 +15,7 @@ class WebApp
     [
      status,
      #los valores de los headers *deben* ser String
-     {'Content-Type' => 'text/plain', 'Content-Length' => body.size.to_s},
+     {'Content-Type' => 'text/html', 'Content-Length' => body.size.to_s},
      [body]
     ]
   end

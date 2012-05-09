@@ -82,6 +82,10 @@ module Views
         <p><%= quote.content %></p>
         <footer><cite><%= quote.author %></cite></footer>
       </blockquote>
+      <form action="/quotes/<%= quote.id%>" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="delete this quote" />
+      </form>
       <a href="/quotes">All quotes</a>
     ERB
   end

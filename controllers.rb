@@ -21,6 +21,15 @@ module Controllers
         return new
       end
 
+      #REST hacks:
+      #
+      #Since browsers can only do GET and POST, we use this hack to
+      #simulate PUT and DELETE
+      #rack already does this, so...
+      if request.params["_method"]
+        request.env["REQUEST_METHOD"] = request.params["_method"]
+      end
+
       #collection actions
       if request.path =~ collection_pattern
         if request.get?
@@ -104,6 +113,16 @@ module Controllers
 
       #redirect to the quote
       [301, "/quotes/#{quote.id}"]
+    end
+
+    def destroy
+      quote = Quote.find(request.params["id"])
+      quote.destroy
+      if quote
+        [301, "/quotes"]
+      else
+        raise NotFoundException
+      end
     end
   end
 end

@@ -24,6 +24,10 @@ module Models
       "
     end
 
+    def destroy
+      @@instances.delete_if{ |i| i.id == self.id }
+    end
+
     def self.create(hash_or_array)
       if hash_or_array.is_a?(Hash)
         hsh = hash_or_array

@@ -44,16 +44,17 @@ module Views
   INDEX = View.define(in: BASE) do
     <<-ERB
       <h1>Quotes: </h1>
-      <ul>
+      <dl>
         <% quotes.each do |quote| %>
-          <li>
+          <dt><a href="/quotes/<%= quote.id %>"><%= quote.id.slice(1..5) %>...</a></dt>
+          <dd>
             <blockquote>
               <p><%= quote.content %></p>
               <footer><cite><%= quote.author %></cite></footer>
             </blockquote>
-          </li>
+          </dd>
         <% end %>
-      </ul>
+      </dl>
       <a href="/quotes/new">New Quote</a>
     ERB
   end

@@ -1,0 +1,19 @@
+<h1>Quotes: </h1>
+<div>
+    <h2>Search by author:</h2>
+    <form action="/quotes" method="get">
+      <input type="search" placeholder="name or last name" name="author"/>
+    </form>
+</div>
+<dl>
+  <% quotes.each do |quote| %>
+    <dt><a href="/quotes/<%= quote.id %>"><%= quote.id.slice(1..5) %>...</a></dt>
+    <dd>
+      <blockquote>
+        <p><%= quote.content %></p>
+        <footer><cite><%= quote.author %></cite></footer>
+      </blockquote>
+    </dd>
+  <% end %>
+</dl>
+<a href="/quotes/new">New Quote</a>

@@ -93,17 +93,20 @@ module Controllers
       else
         Quote.where_include author: request.params["author"]
       end
-      [200, INDEX.render(binding)]
+      template = View.create(:index)
+      [200, template.render(binding)]
     end
 
     def new
-      [200, NEW.render]
+      template = View.create(:new)
+      [200, template.render(binding)]
     end
 
     def show
       quote = Quote.find(request.params["id"])
       if quote
-        [200, SHOW.render(binding)]
+        template = View.create(:show)
+        [200, template.render(binding)]
       else
         raise NotFoundException
       end

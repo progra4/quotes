@@ -2,11 +2,16 @@ require 'erb'
 
 module Views
   class View
-    def initialize(template, layout = nil)
+    def initialize(template_or_name, layout = nil)
       #must be an instance of View that expects a binding with `body 
       @layout = layout
-      @template = ERB.new(template)
+      @template = if template_or_name.is_a?(String)
+                    ERB.new(template_or_name)
+                  else
+                    ERB.new(File.read("#{Dir.pwd}/views/#{template_or_name}.html.erb"))
+                  end
     end
+
 
     def render(with_binding = nil)
       #this adds body to the top-level binding
@@ -23,76 +28,9 @@ module Views
       template = builder.call
       View.new(template, layout)
     end
-  end
 
-  BASE = View.define do
-    #another way of defining
-    <<-ERB
-       <!doctype>
-       <html>
-          <head>
-              <meta charset="utf-8" />
-              <title>Quotes</title>
-          </head>
-          <body>
-              <%= body %>
-          </body>
-       </html>
-    ERB
-  end
-
-  INDEX = View.define(in: BASE) do
-    <<-ERB
-      <h1>Quotes: </h1>
-      <div>
-          <h2>Search by author:</h2>
-          <form action="/quotes" method="get">
-            <input type="search" placeholder="name or last name" name="author"/>
-          </form>
-      </div>
-      <dl>
-        <% quotes.each do |quote| %>
-          <dt><a href="/quotes/<%= quote.id %>"><%= quote.id.slice(1..5) %>...</a></dt>
-          <dd>
-            <blockquote>
-              <p><%= quote.content %></p>
-              <footer><cite><%= quote.author %></cite></footer>
-            </blockquote>
-          </dd>
-        <% end %>
-      </dl>
-      <a href="/quotes/new">New Quote</a>
-    ERB
-  end
-
-  NEW = View.define(in: BASE) do
-    <<-ERB
-      <form action="/quotes" method = "post">
-        <p>
-         <label for="c">Content</label>
-         <textarea id="c" name="content"></textarea>
-        </p>
-        <p>
-         <label for="c">Author</label>
-         <input type="text" id="a" name="author"/>
-        </p>
-
-         <input type="submit" value="Create" />
-      </form>
-    ERB
-  end
-
-  SHOW = View.define(in: BASE) do
-    <<-ERB
-      <blockquote>
-        <p><%= quote.content %></p>
-        <footer><cite><%= quote.author %></cite></footer>
-      </blockquote>
-      <form action="/quotes/<%= quote.id%>" method="post">
-        <input type="hidden" name="_method" value="DELETE">
-        <input type="submit" value="delete this quote" />
-      </form>
-      <a href="/quotes">All quotes</a>
-    ERB
+    def self.create(template_name, layout = :layout)
+      View.new(template_name, View.new(:layout))
+    end
   end
 end

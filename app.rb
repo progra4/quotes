@@ -10,12 +10,12 @@ class WebApp
     request = Rack::Request.new(env)
     controller = QuotesController.new(request)
     
-    status, body = controller.dispatch
+    status, headers, body = controller.dispatch
 
     [
      status,
      #los valores de los headers *deben* ser String
-     {'Content-Type' => 'text/html', 'Content-Length' => body.size.to_s},
+     headers.merge({'Content-Type' => 'text/html', 'Content-Length' => body.size.to_s}),
      [body]
     ]
   end

@@ -74,4 +74,14 @@ module Views
       </form>
     ERB
   end
+
+  SHOW = View.define(in: BASE) do
+    <<-ERB
+      <blockquote>
+        <p><%= quote.content %></p>
+        <footer><cite><%= quote.author %></cite></footer>
+      </blockquote>
+      <a href="/quotes">All quotes</a>
+    ERB
+  end
 end

@@ -55,11 +55,16 @@ module Controllers
 
     def dispatch
       begin
-        route 
+        status, body = route
+        if status == 301
+          [status, {'Location' => body}, ""]
+        else
+          [status, {}, body]
+        end
       rescue NotFoundException
-        [404, ""]
+        [404,{}, ""]
       rescue 
-        [500, ""]
+        [500,{}, ""]
       end
     end
   end
@@ -85,7 +90,7 @@ module Controllers
     def show
       quote = Quote.find(request.params["id"])
       if quote
-        [200, quote.as_text]
+        [200, SHOW.render(binding)]
       else
         raise NotFoundException
       end
@@ -97,7 +102,8 @@ module Controllers
         author:  request.params["author"]
       )
 
-      [201, quote.as_text]
+      #redirect to the quote
+      [301, "/quotes/#{quote.id}"]
     end
   end
 end

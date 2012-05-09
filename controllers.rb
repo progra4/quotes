@@ -72,8 +72,8 @@ module Controllers
         end
       rescue NotFoundException
         [404,{}, ""]
-      rescue 
-        [500,{}, ""]
+      rescue Exception => e
+        [500,{}, e.to_s]
       end
     end
   end
@@ -88,7 +88,11 @@ module Controllers
     end
 
     def index
-      quotes = Quote.all
+      quotes = unless request.params["author"]
+        Quote.all
+      else
+        Quote.where_include author: request.params["author"]
+      end
       [200, INDEX.render(binding)]
     end
 

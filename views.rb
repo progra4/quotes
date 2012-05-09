@@ -44,6 +44,12 @@ module Views
   INDEX = View.define(in: BASE) do
     <<-ERB
       <h1>Quotes: </h1>
+      <div>
+          <h2>Search by author:</h2>
+          <form action="/quotes" method="get">
+            <input type="search" placeholder="name or last name" name="author"/>
+          </form>
+      </div>
       <dl>
         <% quotes.each do |quote| %>
           <dt><a href="/quotes/<%= quote.id %>"><%= quote.id.slice(1..5) %>...</a></dt>

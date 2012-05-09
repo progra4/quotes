@@ -28,6 +28,23 @@ module Models
       @@instances.delete_if{ |i| i.id == self.id }
     end
 
+    def self.where(opts)
+      @@instances.find_all do |instance|
+        opts.collect do |attr, val|
+          instance.send(attr) == val
+        end.all?
+      end
+    end
+
+    def self.where_include(opts)
+      @@instances.find_all do |instance|
+        opts.collect do |attr, val|
+          instance.send(attr).downcase.include? val.downcase
+        end.all?
+      end
+    end
+
+
     def self.create(hash_or_array)
       if hash_or_array.is_a?(Hash)
         hsh = hash_or_array

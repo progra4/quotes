@@ -1,4 +1,5 @@
 require './models'
+require './views'
 module Controllers
   class NotFoundException < Exception; end
 
@@ -14,6 +15,10 @@ module Controllers
       collection_pattern = /\/#{resource_name}$/
       member_pattern     = /\/#{resource_name}\/([a-z0-9\-]+)/
 
+        #non-restful-actions
+        if request.path == "/#{resource_name}/new"
+                return new
+        end
 
       #collection actions
       if request.path =~ collection_pattern
@@ -48,11 +53,17 @@ module Controllers
 
     def dispatch
       begin
-        route 
+      #gracias a saul por la adecuada construccion de una redireccion
+        status, body = route 
+      if status == 301
+      [status,{'Location'=>body},""]
+      else
+      [status, {}, body]
+      end
       rescue NotFoundException
-        [404, ""]
-      rescue 
-        [500, ""]
+        [404, {},""]
+      rescue Exception => e
+        [500, {},e.to_s]
       end
     end
   end
@@ -60,31 +71,40 @@ module Controllers
 
   class QuotesController < Controller
     include Models
+    include Views
 
     def resource_name
       "quotes"
     end
 
     def index
-      [200, Quote.all.map(&:as_text).join("\n")]
+      #[200, Quote.all.map(&:as_text).join("\n")]
+      quotes = Quote.all
+      [200, View.new(:index).render(binding)]
     end
+
+        def new
+                template = View.new(:new)
+                [201, template.render(binding)]
+        end
 
     def show
       quote = Quote.find(request.params["id"])
       if quote
-        [200, quote.as_text]
+        #[200, quote.as_text]
+        [200, View.new(:show).render(binding)]
       else
         raise NotFoundException
       end
     end
 
-    def create
+def create
       quote = Quote.create(
         content: request.params["content"],
         author:  request.params["author"]
       )
 
-      [201, quote.as_text]
+      [301, "/quotes"]
     end
   end
 end

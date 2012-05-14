@@ -1,0 +1,8 @@
+<h1>Quotes</h1>
+<ul>
+<% quotes.each do |i| %>
+   <li> <a href="http://localhost:3000/quotes/<%= i.id%>"> ID: <%= i.id%></a> 
+   <p> <%= i.author %> </p> <p> <%= i.content%> </p> </li>
+<% end %>
+</ul>
+<a href="http://localhost:3000/quotes/new"> Create quote></a>
